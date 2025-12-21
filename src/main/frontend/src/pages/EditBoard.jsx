@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useBoard } from "../context/BoardContext";
 import {
@@ -8,6 +9,7 @@ import {
 function EditBoard() {
   const { posts, updateBoard } = useBoard();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { id } = useParams();
 
   // URL 파라미터에서 받은 id를 숫자로 변환하여 해당 게시글 찾기
@@ -55,7 +57,8 @@ function EditBoard() {
   // -----------------------
   // 글 수정 처리 (WriteBoard.js의 handleUpdate 로직을 기반으로 수정)
   // -----------------------
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
+
     const num = Number(score);
 
     // 맛점수 유효성 검사 (WriteBoard.js의 로직 재사용)
@@ -64,10 +67,26 @@ function EditBoard() {
       return;
     }
 
+    const postData = {
+        title,
+        content,
+        author: user.id,
+        category,
+        date,
+        image,
+        score: num,
+      };
+
     // updateBoard 함수에 모든 필드 전달
-    updateBoard(Number(id), title, content, author, category, date, image, num);
+     const success = await updateBoard(Number(id), postData);
+
+    if (success) {
+    alert("수정 성공!");
     navigate("/board");
-  };
+  }else {
+         alert("수정에 실패했습니다!ㅠㅠ");
+       }
+   };
 
   // -----------------------
   // 게시글이 없을 때
@@ -112,13 +131,14 @@ function EditBoard() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          
+
           {/* 작성자 */}
           <Input
             type="text"
             placeholder="작성자 이름"
-            value={author}
+            value={user?.id || ""}
             onChange={(e) => setAuthor(e.target.value)}
+            readOnly
           />
 
           {/* 날짜 */}

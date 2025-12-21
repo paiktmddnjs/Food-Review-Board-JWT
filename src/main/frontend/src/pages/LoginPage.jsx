@@ -16,12 +16,12 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = login(id, pw);
+    const success = await login(id, pw);
 
-    if (result) {
+    if (success) {
       alert("로그인 성공!");
       navigate("/");
     } else {

@@ -1,15 +1,15 @@
 // src/pages/RegisterPage.jsx (API 연동)
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { Container, Title, Form, Input, Button } from "./RegisterPage.styled";
 
 export default function RegisterPage() {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [phone, setPhone] = useState("");
-
+  const { register } = useAuth();
   const navigate = useNavigate();
-
   // ----------------------------------------------------
   // 🔥 회원가입 처리 (API 호출로직으로 변경)
   // ----------------------------------------------------
@@ -30,13 +30,9 @@ export default function RegisterPage() {
 
     try {
       // 2. 백엔드 API 호출
-      const res = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
+      const res = await register(newUser);
 
-      if (res.status === 201) {
+     if (res.status === 201 || res.status === 200) {
         // 성공 (백엔드에서 201 Created 반환 시)
         alert("회원가입 완료! 로그인해 주세요.");
         navigate("/login");

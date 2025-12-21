@@ -15,11 +15,13 @@ import {
 //  PostCard 컴포넌트를 BoardList 함수 정의 외부로 독립적으로 정의합니다.
 const PostCard = ({ post, navigate, likes = {}, togglePostLike }) => {
   // likes props에 기본값 {}을 설정하여, 혹시라도 undefined가 들어와도 안전하게 접근할 수 있도록 보장합니다.
-  const isLiked = !!likes[post.id]; 
+  const isLiked = !!likes[String(post.id)];
 
   const handleLikeClick = (e) => {
     e.stopPropagation(); // Card 클릭 이벤트 방지
     togglePostLike(post.id); // Context 함수 호출
+      console.log("🔥 post.id = ", post.id);
+      console.log("🔥likes[String(post.id)] = ", likes[String(post.id)]);
   };
 
   return (
@@ -39,7 +41,7 @@ const PostCard = ({ post, navigate, likes = {}, togglePostLike }) => {
       <DateText>{post.date}</DateText>
       
       {/* 클릭 가능한 하트 버튼 (인기도) */}
-      const isLiked = post.likedByCurrentUser;
+
       <HeartButton  $isLiked={isLiked} onClick={handleLikeClick}>
           {isLiked ? '❤️' : '🤍'}
       </HeartButton>
@@ -63,16 +65,20 @@ function BoardList() {
       </WriteBox>
 
       <List>
-        {posts.map((post) => (
-          <PostCard 
-            key={post.id} 
-            post={post} 
-            navigate={navigate} 
-            likes={likes}
-            togglePostLike={togglePostLike}
-          />
-        ))}
+        {posts.map((post) => {
+          console.log("날짜 값:", post.date);
+          return (
+            <PostCard
+              key={post.id}
+              post={post}
+              navigate={navigate}
+              likes={likes}
+              togglePostLike={togglePostLike}
+            />
+          );
+        })}
       </List>
+
 
       <HomeLinkWrapper>
         <StyledLink to="/">홈으로 가기</StyledLink>

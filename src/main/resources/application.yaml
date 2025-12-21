@@ -2,9 +2,15 @@ spring:
   application:
     name: board
 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
   datasource:
     hikari:
-      jdbc-url: jdbc:h2:file:C:\workspace\RestServer\board
+      jdbc-url: jdbc:h2:file:C:\dev_tool\db\board
       driver-class-name: org.h2.Driver
       username: sa
       password: 1234

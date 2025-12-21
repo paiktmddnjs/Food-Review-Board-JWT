@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/posts/**",
+                                "/api/likes/**",
                                 "/h2-console/**"   // ⭐ 이게 핵심
                         ).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()

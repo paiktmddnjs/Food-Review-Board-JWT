@@ -31,7 +31,7 @@ function AppRoutes() {
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             {/* EditBoard 경로는 ProtectedRoute 외부로 설정되어 있지만,
                 실제 수정 로직에서 인증이 필요할 수 있습니다. */}
-            <Route path={ROUTES.EDIT(":id")} element={<EditBoard />} /> 
+
             
             {/* 홈 + 중첩 라우트 */}
             <Route
@@ -45,6 +45,7 @@ function AppRoutes() {
               {/* Board Routes */}
               <Route path={ROUTES.BOARD} element={<BoardList />} />
               <Route path={ROUTES.BOARD_DETAIL(":id")} element={<BoardDetail />} />
+              <Route path={ROUTES.EDIT(":id")} element={<EditBoard />} />
               
               {/* Writing/Editing Routes */}
               <Route path={ROUTES.WRITE} element={<WriteBoard />} />

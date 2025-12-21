@@ -4,18 +4,12 @@ import styled from 'styled-components';
 // 1. Wrapper: 전체 페이지를 감싸고 중앙 정렬을 담당
 // -----------------------
 export const Wrapper = styled.div`
-  min-height: 100vh; /* 뷰포트 전체 높이를 사용 */
-  width : 100%;
-  display: flex; /* Flexbox 활성화 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 (선택 사항: 박스가 화면 중앙에 위치) */
-  padding: 20px 0; /* 상하 패딩 추가 */
-  background-color: #f7f7f7;
+   width: 100%;
+   max-width: 650px;
+   margin: 40px auto;
+   padding: 20px;
+   text-align: center;
 
- position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 
 `;
 
@@ -23,13 +17,10 @@ export const Wrapper = styled.div`
 // 2. Container: 실제 내용을 담는 박스
 // -----------------------
 export const Container = styled.div`
-  width: 90%;
-  max-width: 600px; /* 최대 너비 지정 */
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center; /* h1 등 블록 레벨 요소 내부 텍스트 중앙 정렬 */
+   background: #ffffff; /* 배경색 */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 그림
 
   h1 {
     color: #333;
@@ -94,17 +85,12 @@ export const Button = styled.button`
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: bold;
-  transition: background-color 0.3s, transform 0.1s;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: #4cae4c;
   }
 
-  &:active {
-    transform: translateY(1px);
-  transform: translate(-50%, -50%);
-  }
-    
 `;
 
 // -----------------------

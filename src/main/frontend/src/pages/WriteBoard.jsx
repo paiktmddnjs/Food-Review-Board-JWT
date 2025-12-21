@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useBoard } from '../context/BoardContext';
 import { 
@@ -7,17 +8,19 @@ import {
 
 function WriteBoard() {
   const { addBoard, updateBoard } = useBoard();
+  const { posts } = useBoard();
+  const { user } = useAuth();
 
   const [category, setCategory] = useState("일반");
   const [score , setScore] = useState("");  
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
   const [date, setDate] = useState("");
   const [image, setImage] = useState(null); // 이미지 상태
   const [editingId, setEditingId] = useState(null);
 
   const navigate = useNavigate();
+
 
   // -----------------------
   // 이미지 선택 처리
@@ -42,7 +45,17 @@ function WriteBoard() {
       alert("맛점수는 1~5점 사이여야 합니다!");
       return;
     }
-    addBoard(category, num, title, content, author, date, image); // 이미지 전달
+    addBoard({
+      category,
+      score: num,
+      title,
+      content,
+      author: user.id,
+      date,
+      image
+
+    });
+ // 이미지 전달
     navigate("/board");
   };
 
@@ -50,7 +63,15 @@ function WriteBoard() {
   // 글 수정 처리
   // -----------------------
   const handleUpdate = () => {
-    updateBoard(editingId, title, content, author, category, date, image);
+    updateBoard(editingId, {
+      title,
+      content,
+      author: user.id,
+      category,
+      date,
+      image
+    });
+
     navigate("/board");
   };
 
@@ -92,8 +113,8 @@ function WriteBoard() {
           <Input
             type="text"
             placeholder="작성자 이름"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={user?.id || ""}
+            readOnly
           />
 
           <Input

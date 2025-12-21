@@ -6,28 +6,59 @@ import { useAuth } from "./AuthContext";
 const BoardContext = createContext();
 export const useBoard = () => useContext(BoardContext);
 
-const API_URL = "http://localhost:8080/api";
+const api = "http://localhost:8080/api";
 
 export const BoardProvider = ({ children }) => {
   const { user } = useAuth();
-  const userId = user?.id;
+  const userId = user?.id ?? null;
 
   const [posts, setPosts] = useState([]);
   const [likes, setLikes] = useState({}); // { postId: true }
+  const [ topLikesCount , setTopLikesCount] = useState({});
 
-  // 1. 게시글 로드
+
+  // 1️⃣ 게시글 로드 (안전)
   const fetchPosts = async () => {
-    const res = await axios.get(`${API_URL}/posts`);
-    setPosts(res.data);
+    try {
+      const res = await axios.get(`${api}/posts`);
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data?.content || [];
+      setPosts(data);
+    } catch (e) {
+      console.error("게시글 로드 실패", e);
+      setPosts([]);
+    }
   };
 
-  // 2. 사용자 좋아요 로드
+  // 2️⃣ 사용자 좋아요 로드 (안전)
   const fetchLikes = async () => {
-    if (!userId) return;
-    const res = await axios.get(`${API_URL}/likes/user/${userId}`);
-    const likeMap = {};
-    res.data.forEach(l => (likeMap[l.post.id] = true));
-    setLikes(likeMap);
+    if (!userId) {
+      setLikes({});
+      return;
+    }
+
+
+
+    //사용자가 좋아요 누른 게시글 정보를 서버에서 가져와 React 상태에 저장한다.
+    try {
+      const res = await axios.get(`${api}/likes/user/${userId}`);
+        console.log("🔥 좋아요 API 응답 res.data =", res.data);
+      const likeMap = {};
+
+      // 좋아요 API가 [postId, postId] 형태라고 가정
+      if (Array.isArray(res.data)) { //배열이면 true, 아니면 false
+        res.data.forEach(dto  => {
+          likeMap[String(dto.postId)] = true;
+           console.log("🔥 Array.isArray(res.data) = ", Array.isArray(res.data));
+        });
+      }
+
+      setLikes(likeMap);
+    } catch (e) {
+      console.warn("좋아요 로드 실패 (무시)", e);
+      setLikes({});
+    }
   };
 
   useEffect(() => {
@@ -35,45 +66,97 @@ export const BoardProvider = ({ children }) => {
     fetchLikes();
   }, [userId]);
 
+
+
   // 게시글 추가
-  const addBoard = async (postData) => {
-    await axios.post(`${API_URL}/posts`, { ...postData, userId });
-    fetchPosts();
-  };
+const addBoard = async (postData) => {
+  await axios.post(`${api}/posts`, {
+    title: postData.title,
+    content: postData.content,
+    author: postData.author,
+    category: postData.category,
+    score: postData.score,
+    image: postData.image,
+    date : postData.date,
+    userId
+  });
+  fetchPosts();
+};
 
   // 게시글 수정
   const updateBoard = async (id, postData) => {
-    await axios.put(`${API_URL}/posts/${id}`, postData);
+    await axios.put(`${api}/posts/${id}`, {
+                                              title: postData.title,
+                                              content: postData.content,
+                                              author: postData.author,
+                                              category: postData.category,
+                                              score: postData.score,
+                                              image: postData.image,
+                                              date : postData.date,
+                                              userId
+                                            });
     fetchPosts();
+    return true;
   };
 
   // 게시글 삭제
   const deleteBoard = async (id) => {
-    await axios.delete(`${API_URL}/posts/${id}`);
+    await axios.delete(`${api}/posts/${id}`);
     fetchPosts();
   };
 
   // 좋아요 토글
   const togglePostLike = async (postId) => {
-    await axios.post(`${API_URL}/likes/toggle`, null, { params: { userId, postId } });
-    fetchLikes();
+    if (!userId) return;
+    console.log("👤 userId:", userId);
+    await axios.post(`${api}/likes/toggle`, {
+      userId,
+      postId
+    });
+
+     console.log("🔥 userId, postId = ", userId, postId);
+     await fetchLikes();  // 내가 눌렀는지 여부
+     await loadLikes();   // 🔥 전체 좋아요 수 다시 로드
   };
 
-  // 좋아요 수 계산
+  // 3️⃣ 좋아요 수 계산
+  const safePosts = Array.isArray(posts) ? posts : [];
   const postLikeCounts = {};
-  posts.forEach(post => {
-    postLikeCounts[post.id] = likes[post.id] ? 1 : 0; // 단순히 로그인 사용자만 체크
-  });
+
+
+// postId 기준으로 좋아요 수 가져오기
+const loadLikes = async () => {
+    try {
+      const res = await axios.get(`${api}/likes/postlikes`);
+
+      const ToplikeMap = {};
+      res.data.forEach(like => {
+
+          ToplikeMap[like.postId] = like.likeCount;
+      });
+
+      setTopLikesCount(ToplikeMap);
+    } catch (e) {
+      console.error("좋아요 수 로드 실패", e);
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 한 번 호출
+  useEffect(() => {
+    loadLikes();
+  }, []);
+
 
   return (
     <BoardContext.Provider value={{
-      posts,
-      addBoard,
-      updateBoard,
-      deleteBoard,
-      likes,
-      togglePostLike,
-      postLikeCounts,
+     posts: safePosts,
+       addBoard,
+       updateBoard,
+       deleteBoard,
+       likes,              // 사용자 좋아요 여부
+       togglePostLike,
+       topLikesCount,      // 🔥 서버 집계 좋아요 수
+       loadLikes
     }}>
       {children}
     </BoardContext.Provider>

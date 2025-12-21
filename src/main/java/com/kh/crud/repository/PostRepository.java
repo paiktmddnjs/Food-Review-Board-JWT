@@ -1,5 +1,3 @@
-
-
 package com.kh.crud.repository;
 
 import com.kh.crud.entity.Post;

@@ -32,6 +32,13 @@ function BoardDetail() {
   // (가정: post 객체에 작성자 ID가 post.userId로 저장되어 있습니다.)
   const isAuthor = user && post.userId === user.id;
 
+
+console.log("👤 로그인 user:", user);
+console.log("✍️ 게시글 작성자 post.userId:", post.userId);
+console.log("🆔 로그인 user.id:", user?.id);
+console.log("✅ isAuthor:", user && post.userId === user.id);
+console.log("✅ post.score: ", post.score);
+
   return (
     <Wrapper>
       <Content>

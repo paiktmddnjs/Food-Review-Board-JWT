@@ -7,22 +7,30 @@ import {
 
 function TopPosts() {
   // useBoard에서 posts와 postLikeCounts를 가져옵니다.
-  const { posts, likes } = useBoard();  // postLikeCounts → likes
+  const { posts, likes , topLikesCount } = useBoard();  // postLikeCounts → likes
+
 
   const topPosts = useMemo(() => {
-    const safeLikes = likes || {};
+    return posts
+      .map(post => {
+        console.log(
+          "🔥 계산 중",
+          "postId =", post.id,
+          "topLikesCount =", topLikesCount,
+          "topLikesCount =", topLikesCount?.[post.id]
+        );
 
-    const postsWithLikes = posts.map(post => ({
-      ...post,
-      likeCount: safeLikes[String(post.id)] || 0,  // 좋아요 수 반영
-    }));
-
-    return postsWithLikes
+        return {
+          ...post,
+          likeCount: topLikesCount?.[post.id] ?? 0
+        };
+      })
       .sort((a, b) => b.likeCount - a.likeCount)
       .slice(0, 3);
-  }, [posts, likes]);
+  }, [posts, topLikesCount]);
 
 
+ console.log(posts);
   return (
     <Wrapper>
       <Container>

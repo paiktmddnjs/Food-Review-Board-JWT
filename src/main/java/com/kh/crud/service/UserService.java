@@ -15,15 +15,21 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User register(User user) {
-        return userRepository.save(user);
+
+        return userRepository.save(user); //DB에 User 엔티티 저장
     }
+
 
     public Optional<User> login(String id, String pw) {
         return userRepository.findById(id)
-                .filter(u -> u.getPw().equals(pw));
+                .filter(u -> u.getPw().equals(pw)); // 비밀번호 일치하면 Optional<User> 반환, 아니면 Optional.empty()반환
     }
 
-    public Optional<User> findById(String id) {
-        return userRepository.findById(id);
+
+    public Long getUserCount() {
+
+        return userRepository.count(); //DB에 저장된 전체 User 수 반환
     }
+
+
 }

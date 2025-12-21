@@ -2,6 +2,7 @@ package com.kh.crud.service;
 
 
 
+import com.kh.crud.dto.PostLikeCountDto;
 import com.kh.crud.entity.Like;
 import com.kh.crud.entity.Post;
 import com.kh.crud.repository.LikeRepository;
@@ -37,5 +38,14 @@ public class LikeService {
             like.setUserId(userId);
             likeRepository.save(like);
         }
+    }
+
+    public List<Long> getLikedPostIdsByUser(String userId) {
+        return likeRepository.findPostIdsByUserId(userId);
+    }
+
+
+    public List<PostLikeCountDto> getPostLikeCounts() {
+        return likeRepository.findPostLikeCounts();
     }
 }
