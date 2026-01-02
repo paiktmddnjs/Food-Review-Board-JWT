@@ -45,3 +45,8 @@ server:
 mybatis:
   type-aliases-package: com.kh.board.entity
   mapper-locations: mappers/*.xml
+
+  # JWT SET
+jwt:
+  secret: +WdHryR/cbU9j1wVGfNnvjZyhuCPHgJNL3vNyA3ArdM=
+  expiration: 86400000

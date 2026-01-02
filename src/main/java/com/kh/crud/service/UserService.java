@@ -2,9 +2,12 @@ package com.kh.crud.service;
 
 // UserService.java
 
+import com.kh.crud.dto.UserDto;
 import com.kh.crud.entity.User;
+import com.kh.crud.global.security.JwtTokenProvider;
 import com.kh.crud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,16 +16,48 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public User register(User user) {
+    public String register(UserDto.Request request) {
 
-        return userRepository.save(user); //DB에 User 엔티티 저장
+        if (userRepository.existsByUserId(request.getUserId())) {
+            throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
+        }
+
+        String encodedPw = passwordEncoder.encode(request.getPw());
+
+        // 3. DTO → Entity 변환
+        User user = User.builder()
+                .userId(request.getUserId())
+                .pw(encodedPw)
+                .phone(request.getPhone())
+                .build();
+
+        userRepository.save(user); //DB에 User 엔티티 저장
+        return user.getUserId();
     }
 
 
-    public Optional<User> login(String id, String pw) {
-        return userRepository.findById(id)
-                .filter(u -> u.getPw().equals(pw)); // 비밀번호 일치하면 Optional<User> 반환, 아니면 Optional.empty()반환
+    public UserDto.LoginResponse login(UserDto.LoginRequest request) {
+        //1. 회원조회
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("아이디 일치하지 않습니다."));
+
+        //2. 비밀번호 확인
+        if(!passwordEncoder.matches(request.getPw(), user.getPw())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String userId = user.getUserId();
+        String role = user.getRole().name();
+        String token = jwtTokenProvider.generateToken(userId, role);
+
+        return UserDto.LoginResponse.builder()
+                .userId(userId)
+                .role(role)
+                .token(token)
+                .build();
     }
 
 
