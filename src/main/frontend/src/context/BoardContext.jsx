@@ -10,7 +10,7 @@ const api = "http://localhost:8080/api";
 
 export const BoardProvider = ({ children }) => {
   const { user } = useAuth();
-  const userId = user?.id ?? null;
+  const userId = user?.user?.userId ?? null;
 
   const [posts, setPosts] = useState([]);
   const [likes, setLikes] = useState({}); // { postId: true }
@@ -70,21 +70,31 @@ export const BoardProvider = ({ children }) => {
 
   // 게시글 추가
 const addBoard = async (postData) => {
+  const formattedDate = postData.date
+    ? new Date(postData.date).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0];
+
   await axios.post(`${api}/posts`, {
     title: postData.title,
     content: postData.content,
-    author: postData.author,
     category: postData.category,
     score: postData.score,
     image: postData.image,
-    date : postData.date,
-    userId
+    date: formattedDate,  // ✅ 문자열로 보내기
+    userId: userId // ✅ 실제 DB와 연관
   });
+
   fetchPosts();
 };
 
+
   // 게시글 수정
   const updateBoard = async (id, postData) => {
+       const formattedDate = postData.date
+          ? new Date(postData.date).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0];
+
+
     await axios.put(`${api}/posts/${id}`, {
                                               title: postData.title,
                                               content: postData.content,
@@ -92,8 +102,7 @@ const addBoard = async (postData) => {
                                               category: postData.category,
                                               score: postData.score,
                                               image: postData.image,
-                                              date : postData.date,
-                                              userId
+                                               date: formattedDate
                                             });
     fetchPosts();
     return true;
@@ -126,20 +135,28 @@ const addBoard = async (postData) => {
 
 // postId 기준으로 좋아요 수 가져오기
 const loadLikes = async () => {
-    try {
-      const res = await axios.get(`${api}/likes/postlikes`);
+  try {
+    const res = await axios.get(`${api}/likes/postlikes`);
 
-      const ToplikeMap = {};
+    console.log("🔥 loadLikes raw res.data =", res.data);
+    console.log("🔥 Array?", Array.isArray(res.data));
+
+    const ToplikeMap = {};
+
+    if (Array.isArray(res.data)) {
       res.data.forEach(like => {
-
-          ToplikeMap[like.postId] = like.likeCount;
+        ToplikeMap[like.postId] = like.likeCount;
       });
-
-      setTopLikesCount(ToplikeMap);
-    } catch (e) {
-      console.error("좋아요 수 로드 실패", e);
+    } else {
+      console.error("❌ 배열 아님:", res.data);
     }
-  };
+
+    setTopLikesCount(ToplikeMap);
+  } catch (e) {
+    console.error("좋아요 수 로드 실패", e);
+  }
+};
+
 
   // 컴포넌트가 마운트될 때 한 번 호출
   useEffect(() => {
@@ -149,7 +166,7 @@ const loadLikes = async () => {
 
   return (
     <BoardContext.Provider value={{
-     posts: safePosts,
+       posts: safePosts,
        addBoard,
        updateBoard,
        deleteBoard,

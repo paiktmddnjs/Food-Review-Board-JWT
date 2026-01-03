@@ -3,24 +3,27 @@ package com.kh.crud.entity;
 
 import com.kh.crud.global.common.CommonEnums;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 public class User {
 
     @Id
+    @Column(nullable = false, unique = true)
     private String userId;   // 로그인 ID
+
+    @Column(nullable = false)
     private String pw;
+
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", length = 10, nullable = false)
+    @Column(nullable = false, length = 10)
     @Builder.Default
     private CommonEnums.Role role = CommonEnums.Role.USER;
 }

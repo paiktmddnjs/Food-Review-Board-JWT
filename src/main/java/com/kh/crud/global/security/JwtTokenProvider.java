@@ -21,11 +21,13 @@ public class JwtTokenProvider {
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") long expiration) {
+        // HMAC-SHA 알고리즘에 맞는 키 객체로 변환
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expiration = expiration;
     }
 
     // JWT 토큰 생성
+    // 로그인에 성공한 사용자를 증명하는 JWT를 만들어주는 코드
     public String generateToken(String userId, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);

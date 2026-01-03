@@ -17,9 +17,22 @@ export function AuthProvider({ children }) {
 // 서버에 id , pw를 보내 사용자 정보를 반환
   const login = async (id, pw) => {
     try {
-      const response = await axios.post(`${api}/login`, { id, pw });
-      setUser(response.data);
-       localStorage.setItem("user", JSON.stringify(response.data));
+      const response = await axios.post(`${api}/login`, {
+                               userId: id,  // ⭐ 핵심 수정
+                               pw: pw
+                             });
+
+      const { token, userId, role } = response.data;
+
+        const authData = {
+          token,
+          user: { userId , role },
+        };
+
+      setUser(authData);
+
+      localStorage.setItem("user", JSON.stringify(authData));
+
       return true;
     } catch (err) {
       return false;

@@ -26,27 +26,25 @@ export default function RegisterPage() {
       return;
     }
 
-    const newUser = { id, pw, phone };
+    const newUser = { userId: id , pw, phone };
 
     try {
-      // 2. 백엔드 API 호출
       const res = await register(newUser);
 
-     if (res.status === 201 || res.status === 200) {
-        // 성공 (백엔드에서 201 Created 반환 시)
-        alert("회원가입 완료! 로그인해 주세요.");
-        navigate("/login");
-      } else if (res.status === 400) {
-        // 백엔드에서 보낸 아이디/전화번호 중복 에러 처리
-        const errorText = await res.text();
-        alert(`회원가입 실패: ${errorText}`);
-      } else {
-        alert("회원가입 중 알 수 없는 오류가 발생했습니다.");
-      }
+      console.log(res.data);   // "test123"
+      console.log(res.status); // 200
+
+      alert("회원가입 완료! 로그인해 주세요.");
+      navigate("/login");
 
     } catch (error) {
       console.error("회원가입 중 오류 발생:", error);
-      alert("서버와 통신에 실패했습니다.");
+
+      if (error.response) {
+        alert(error.response.data); // 백엔드 에러 메시지
+      } else {
+        alert("서버와 통신에 실패했습니다.");
+      }
     }
   };
   // ----------------------------------------------------

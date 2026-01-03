@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 public class UserDto {
 
@@ -58,13 +57,12 @@ public class UserDto {
     @Builder
     public static class LoginResponse {
 
-        private String token;
 
         private String userId;   // 로그인 ID
 
-        private String pw;
-
         private String role;
+
+        private String token;
 
 
     }

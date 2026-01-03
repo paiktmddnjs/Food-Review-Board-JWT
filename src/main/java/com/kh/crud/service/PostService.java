@@ -1,8 +1,11 @@
 package com.kh.crud.service;
 // src/main/java/com/example/demo/service/PostService.java
 
+import com.kh.crud.dto.PostResponseDto;
 import com.kh.crud.entity.Post;
+import com.kh.crud.entity.User;
 import com.kh.crud.repository.PostRepository;
+import com.kh.crud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +16,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public Post createPost(Post post) {
+    public Post createPost(PostResponseDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        Post post = new Post();
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+        post.setCategory(dto.getCategory());
+        post.setScore(dto.getScore());
+        post.setImage(dto.getImage());
+        post.setDate(dto.getDate());
+        post.setUser(user); // ⭐ 핵심
 
         return postRepository.save(post);
     }

@@ -15,11 +15,13 @@ import {
 //  PostCard 컴포넌트를 BoardList 함수 정의 외부로 독립적으로 정의합니다.
 const PostCard = ({ post, navigate, likes = {}, togglePostLike }) => {
   // likes props에 기본값 {}을 설정하여, 혹시라도 undefined가 들어와도 안전하게 접근할 수 있도록 보장합니다.
-  const isLiked = !!likes[String(post.id)];
+  const isLiked = !!likes[post.id];
 
   const handleLikeClick = (e) => {
     e.stopPropagation(); // Card 클릭 이벤트 방지
     togglePostLike(post.id); // Context 함수 호출
+    console.log("🔥 likes 전체:", likes);
+    console.log("🔥 likes keys:", Object.keys(likes));
       console.log("🔥 post.id = ", post.id);
       console.log("🔥likes[String(post.id)] = ", likes[String(post.id)]);
   };
@@ -70,6 +72,7 @@ function BoardList() {
           return (
             <PostCard
               key={post.id}
+              user={post.userId}
               post={post}
               navigate={navigate}
               likes={likes}

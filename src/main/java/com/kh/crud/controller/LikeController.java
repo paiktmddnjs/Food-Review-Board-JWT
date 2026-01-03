@@ -53,10 +53,6 @@ public class LikeController {
 
         List<PostLikeCountDto> counts = likeService.getPostLikeCounts();
 
-        if (counts.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204
-        }
-
-        return ResponseEntity.ok(counts); // 200
+        return ResponseEntity.ok(counts);
     }
 }

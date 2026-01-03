@@ -46,10 +46,10 @@ function WriteBoard() {
       return;
     }
     addBoard({
-      category,
-      score: num,
-      title,
-      content,
+        category,
+        score: num,
+        title,
+        content,
       author: user.id,
       date,
       image
@@ -113,7 +113,7 @@ function WriteBoard() {
           <Input
             type="text"
             placeholder="작성자 이름"
-            value={user?.id || ""}
+            value={user?.user.userId || ""}
             readOnly
           />
 

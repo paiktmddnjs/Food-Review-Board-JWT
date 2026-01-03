@@ -31,7 +31,10 @@ public class Post {
     @Lob
     private String image;
 
-    private String userId;
+    // 🔥 User와 연관관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // 🔥🔥🔥 핵심
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

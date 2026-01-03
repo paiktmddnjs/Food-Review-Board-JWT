@@ -112,7 +112,7 @@ function Home() {
           borderRadius: "10px",
           display: "inline-block"
         }}>
-          **{user.id}**님 환영합니다!
+          **{user.user.userId}**님 환영합니다!
         </h3>
       </div>
 

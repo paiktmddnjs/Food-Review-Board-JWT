@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
         }
 
+        // 평문 비밀번호 → 해시된 비밀번호로 변환
         String encodedPw = passwordEncoder.encode(request.getPw());
 
         // 3. DTO → Entity 변환
@@ -40,17 +40,20 @@ public class UserService {
 
 
     public UserDto.LoginResponse login(UserDto.LoginRequest request) {
+
         //1. 회원조회
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("아이디 일치하지 않습니다."));
 
-        //2. 비밀번호 확인
+        //2. 비밀번호 확인(검증) : 사용자가 입력한 비밀번호가 DB에 저장된 암호화된 비밀번호와 일치하는지 검증한다
         if(!passwordEncoder.matches(request.getPw(), user.getPw())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
         String userId = user.getUserId();
         String role = user.getRole().name();
+
+        // JWT 생성
         String token = jwtTokenProvider.generateToken(userId, role);
 
         return UserDto.LoginResponse.builder()

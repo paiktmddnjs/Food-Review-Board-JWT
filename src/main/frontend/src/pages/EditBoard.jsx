@@ -136,7 +136,7 @@ function EditBoard() {
           <Input
             type="text"
             placeholder="작성자 이름"
-            value={user?.id || ""}
+            value={user?.user.userId || ""}
             onChange={(e) => setAuthor(e.target.value)}
             readOnly
           />

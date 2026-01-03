@@ -42,8 +42,8 @@ public class PostController {
 
     // 게시글 생성
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody Post post) {
-        Post createdPost = postService.createPost(post);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostResponseDto dto) {
+        Post createdPost = postService.createPost(dto);
         return ResponseEntity.ok(new PostResponseDto(createdPost));
     }
 
@@ -51,16 +51,23 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDto> updatePost(
             @PathVariable Long id,
-            @RequestBody Post post
+            @RequestBody PostResponseDto dto
     ) {
         return postService.getPostById(id)
                 .map(existing -> {
-                    post.setId(id);
-                    Post updated = postService.updatePost(post);
+                    existing.setTitle(dto.getTitle());
+                    existing.setContent(dto.getContent());
+                    existing.setCategory(dto.getCategory());
+                    existing.setScore(dto.getScore());
+                    existing.setImage(dto.getImage());
+                    existing.setDate(dto.getDate());
+                    // userId는 수정 불가, 기존 값 유지
+                    Post updated = postService.updatePost(existing);
                     return ResponseEntity.ok(new PostResponseDto(updated));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
 
     // 게시글 삭제
