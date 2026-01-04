@@ -50,7 +50,6 @@ function WriteBoard() {
         score: num,
         title,
         content,
-      author: user.id,
       date,
       image
 
@@ -66,7 +65,7 @@ function WriteBoard() {
     updateBoard(editingId, {
       title,
       content,
-      author: user.id,
+      author: user.user.userId,
       category,
       date,
       image

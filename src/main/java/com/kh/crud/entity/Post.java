@@ -21,7 +21,6 @@ public class Post {
 
     private String title;
     private String content;
-    private String author;
     private String category;
     private Integer score;
 

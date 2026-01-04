@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class PostResponseDto {
+public class PostDto {
 
     private Long id;
     private String userId;
@@ -22,7 +22,7 @@ public class PostResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    public PostResponseDto(Post post) {
+    public PostDto(Post post) {
         this.id = post.getId();
         this.userId = post.getUser().getUserId();
         this.title = post.getTitle();

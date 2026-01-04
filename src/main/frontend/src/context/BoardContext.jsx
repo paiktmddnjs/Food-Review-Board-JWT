@@ -114,6 +114,7 @@ const addBoard = async (postData) => {
     fetchPosts();
   };
 
+
   // 좋아요 토글
   const togglePostLike = async (postId) => {
     if (!userId) return;

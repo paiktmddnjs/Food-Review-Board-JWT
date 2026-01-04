@@ -1,7 +1,7 @@
 package com.kh.crud.service;
 // src/main/java/com/example/demo/service/PostService.java
 
-import com.kh.crud.dto.PostResponseDto;
+import com.kh.crud.dto.PostDto;
 import com.kh.crud.entity.Post;
 import com.kh.crud.entity.User;
 import com.kh.crud.repository.PostRepository;
@@ -18,7 +18,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public Post createPost(PostResponseDto dto) {
+    public Post createPost(PostDto dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
