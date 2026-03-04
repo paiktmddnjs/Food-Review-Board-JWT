@@ -2,6 +2,7 @@
 
 본 프로젝트는 **Spring Security**와 **JWT(JSON Web Token)**를 사용하여 세션을 유지하지 않는(**Stateless**) 인증 시스템을 구현하고 있습니다.
 
+[음식 리뷰 게시판(이전)](https://github.com/paiktmddnjs/React/tree/main/CRUD)
 ---
 <br>
 
